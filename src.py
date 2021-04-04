@@ -52,11 +52,15 @@ class GraphColoring:
                     if (domain1 != domain2):
                         self.cnf += "-" + self.literals[variable + "_" + domain1] + " -" + self.literals[variable + "_" + domain2] + " 0\n"
                 visited1.append(domain1)
-        for constraint in self.arr_constraints:
-            const_variable1 = constraint.split("!=")[0]
-            const_variable2 = constraint.split("!=")[1]
-            for domain in self.arr_domains:
-                self.cnf += "-" + self.literals[const_variable1 + "_" + domain] + " -" + self.literals[const_variable2 + "_" + domain] + " 0\n"
+        try:
+            for constraint in self.arr_constraints:
+                const_variable1 = constraint.split("!=")[0]
+                const_variable2 = constraint.split("!=")[1]
+                for domain in self.arr_domains:
+                    self.cnf += "-" + self.literals[const_variable1 + "_" + domain] + " -" + self.literals[const_variable2 + "_" + domain] + " 0\n"
+            return True
+        except:
+            return False
     
     def write_to_cnf_file(self):
         with open("sat.cnf", "w") as writer:
@@ -73,15 +77,18 @@ class GraphColoring:
         self.arr_domains = self.domains_input.get().split(",")
         self.arr_constraints = self.constraints_input.get().split(",")
         self.generate_literals()
-        self.graph_coloring_to_cnf()
-        self.write_to_cnf_file()
-        if (self.read_result()):
-            self.translate_literal()
-            self.print_answer()
+        is_cnf_generated = self.graph_coloring_to_cnf()
+        if (is_cnf_generated):
+            self.write_to_cnf_file()
+            if (self.is_satisfiable()):
+                self.translate_literal()
+                self.print_answer()
+            else:
+                self.print_wrong()
         else:
-            self.print_wrong()
+            messagebox.showinfo(title="Wrong Input", message="Please check your input! it's may be wrong :)")
 
-    def read_result(self):
+    def is_satisfiable(self):
         with open("result.cnf") as reader:
             if("UNSAT" in reader.readline()):
                 print("UNSATISFIABLE")
@@ -92,11 +99,11 @@ class GraphColoring:
                 return True
                 
     def translate_literal(self):
-        self.answer = ""
-        print(self.model)
+        self.answer = "Hasil: \n"
+
         for literal in self.model:
             if("-" not in literal):
-                self.answer += self.get_key_by_value(literal) + " "
+                self.answer += self.get_key_by_value(literal) + "\n"
 
     def print_answer(self):
         messagebox.showinfo(title="Model", message=self.answer)
@@ -105,11 +112,10 @@ class GraphColoring:
         messagebox.showinfo(title="No Model", message="Not Satisfiable")
 
     def get_key_by_value(self, value_to_find):
-        print(value_to_find)
-        for val in self.literals.items():
-            print(val)
-            if val[1] == value_to_find:
-                return val[0]
+        key_list = list(self.literals.keys())
+        val_list = list(self.literals.values())
+        pos = val_list.index(value_to_find)
+        return key_list[pos]
 
 graph = GraphColoring()
 graph.start()
