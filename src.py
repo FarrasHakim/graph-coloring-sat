@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import subprocess
 import os
 
@@ -76,8 +77,6 @@ class GraphColoring:
         else:
             print("masuk")
             subprocess.run(["minisat", "sat.cnf", "result.cnf"])
-        
-        
 
     def submit_data(self):  
         self.arr_variables = self.variables_input.get().split(",")
@@ -86,8 +85,38 @@ class GraphColoring:
         self.generate_literals()
         self.graph_coloring_to_cnf()
         self.write_to_cnf_file()
+        if (self.read_result()):
+            self.translate_literal()
+            self.print_answer()
+        else:
+            self.print_wrong()
 
-        
+    def read_result(self):
+        with open("result.cnf") as reader:
+            if("UNSAT" in reader.readline()):
+                print("UNSATISFIABLE")
+                return False
+            else:
+                temp_model = reader.readline()[:-3]
+                self.model = temp_model.split(" ")
+                return True
+                
+    def translate_literal(self):
+        self.answer = ""
+        print(self.model)
+        for literal in self.model:
+            if("-" not in literal):
+                self.answer += self.get_key_by_value(literal) + " "
+
+    def print_answer(self):
+        messagebox.showinfo(title="Model", message=self.answer)
+
+    def get_key_by_value(self, value_to_find):
+        print(value_to_find)
+        for val in self.literals.items():
+            print(val)
+            if val[1] == value_to_find:
+                return val[0]
 
 graph = GraphColoring()
 graph.start()
