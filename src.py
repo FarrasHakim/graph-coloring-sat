@@ -55,7 +55,7 @@ def submit_data():
     temp_constraints = constraints_input.get().split(",")
     
     graph_coloring_to_cnf(temp_variables, temp_domains, temp_constraints)
-    
+
     # with open("graph.in", "w") as writer:
         # writer.write(temp_variables + "\n")
         # writer.write(temp_domains + "\n")
@@ -66,3 +66,6 @@ submit_button = tk.Button(text='Submit', command=submitData)
 canvas1.create_window(200, 180, window=submit_button)
 
 root.mainloop()
+
+# Reference
+# https://github.com/ahnjaekwan/Graph-coloring-problem-with-SAT-solver/blob/master/SAT_solver_spec.pdf
