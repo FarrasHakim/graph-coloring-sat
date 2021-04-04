@@ -51,27 +51,33 @@ class GraphColoring:
                     if (domain1 != domain2):
                         self.cnf += "-" + self.literals[variable + "_" + domain1] + " -" + self.literals[variable + "_" + domain2] + " 0\n"
                 visited1.append(domain1)
-        self.cnf
-
         for domain in self.arr_domains:
             visited2 = []
             for variable1 in self.arr_variables:
-                print(variable1)
                 for variable2 in self.arr_variables:
-                    if (variable2 in visited2):
+                    is_constrained = False
+                    for constraint in self.arr_constraints:
+                        if (variable1 in constraint and variable2 in constraint):
+                            is_constrained = True
+                    if (is_constrained):
+                        continue
+                    elif (variable2 in visited2):
                         continue
                     if (variable1 != variable2):
                         self.cnf += "-" + self.literals[variable1 + "_" + domain] + " -" + self.literals[variable2 + "_" + domain] + " 0\n"
-            visited2.append(variable1)
-        print(self.cnf)
-        print(self.literals)
+                visited2.append(variable1)
     
     def write_to_cnf_file(self):
         with open("sat.cnf", "w") as writer:
             writer.write(self.cnf)
             writer.close()
-        os.system('cmd /c minisat sat.cnf result.cnf')
-        # subprocess.run(["minisat", "sat.cnf result.cnf"])
+        if (os.name) == "nt":
+            os.system('cmd /c minisat sat.cnf result.cnf')
+        else:
+            print("masuk")
+            subprocess.run(["minisat", "sat.cnf", "result.cnf"])
+        
+        
 
     def submit_data(self):  
         self.arr_variables = self.variables_input.get().split(",")
