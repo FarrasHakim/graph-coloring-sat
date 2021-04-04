@@ -1,71 +1,85 @@
 import tkinter as tk
 import subprocess
 
-root= tk.Tk()
+class GraphColoring:
+    def __init__(self):
+        self.root= tk.Tk()
 
-canvas1 = tk.Canvas(root, width = 400, height = 300)
-canvas1.pack()
+    def start(self):
+        self.canvas1 = tk.Canvas(self.root, width = 400, height = 300)
+        self.canvas1.pack()
 
-variables_label = tk.Label(root, text= "Variables : ")
-canvas1.create_window(80, 80, window=variables_label)
-variables_input = tk.Entry (root) 
-canvas1.create_window(200, 80, window=variables_input)
+        self.variables_label = tk.Label(self.root, text= "Variables : ")
+        self.canvas1.create_window(80, 80, window=self.variables_label)
+        self.variables_input = tk.Entry (self.root) 
+        self.canvas1.create_window(200, 80, window=self.variables_input)
 
-domains_label = tk.Label(root, text= "Domains : ")
-canvas1.create_window(80, 110, window=domains_label)
-domains_input = tk.Entry (root) 
-canvas1.create_window(200, 110, window=domains_input)
+        self.domains_label = tk.Label(self.root, text= "Domains : ")
+        self.canvas1.create_window(80, 110, window=self.domains_label)
+        self.domains_input = tk.Entry (self.root) 
+        self.canvas1.create_window(200, 110, window=self.domains_input)
 
-constraints_label = tk.Label(root, text= "Constraints : ")
-canvas1.create_window(80, 140, window=constraints_label)
-constraints_input = tk.Entry (root) 
-canvas1.create_window(200, 140, window=constraints_input)
+        self.constraints_label = tk.Label(self.root, text= "Constraints : ")
+        self.canvas1.create_window(80, 140, window=self.constraints_label)
+        self.constraints_input = tk.Entry (self.root)
+        self.canvas1.create_window(200, 140, window=self.constraints_input)
 
-def graph_coloring_to_cnf(variables, domains, constraints):
-    pass
+        self.submit_button = tk.Button(text='Submit', command=self.submit_data)
+        self.canvas1.create_window(200, 180, window=self.submit_button)
+        self.root.mainloop()
 
-def node_to_var(node_index, color_index, max_color_index):
-    # PARAM:
-    # node_index (n)
-    # color_index (c)
-    # max_color_index (k)
-    # TODO:
-    # return index of propositional variable 
-    # that represents the constraint.
-    # "node n receives color c"
-    # use conversion convention
-    # variable index = (n-1)*k + c
-    pass
+    def generate_literals(self):
+        self.literals = {}
+        count = 0
+        for variable in self.arr_variables:
+            for domain in self.arr_domains:
+                self.literals[variable + "_" + domain] = str(count)
+                count += 1
 
-def at_least_one_color(node_index, color_index, max_color_index):
-    pass
+    def graph_coloring_to_cnf(self):
+        self.cnf = ""
+        for variable in self.arr_variables:
+            for domain in self.arr_domains:
+                self.cnf += self.literals[variable+"_"+domain] + " "
+            self.cnf += "0\n"
+            visited1 = []
+            for domain1 in self.arr_domains:
+                for domain2 in self.arr_domains:
+                    if (domain2 in visited1):
+                        continue
+                    if (domain1 != domain2):
+                        self.cnf += "-" + self.literals[variable + "_" + domain1] + " -" + self.literals[variable + "_" + domain2] + " 0\n"
+                visited1.append(domain1)
+        self.cnf += "--------------"
 
-def at_most_one_color(node_index, color_index, max_color_index):
-    pass
+        for domain in self.arr_domains:
+            visited2 = []
+            for variable1 in self.arr_variables:
+                print(variable1)
+                for variable2 in self.arr_variables:
+                    if (variable2 in visited2):
+                        continue
+                    if (variable1 != variable2):
+                        self.cnf += "-" + self.literals[variable1 + "_" + domain] + " -" + self.literals[variable2 + "_" + domain] + " 0\n"
+            visited2.append(variable1)
+        print(self.cnf)
+                
 
-def generate_node_clauses(node_index, max_color_index):
-    pass
+    def submit_data(self):  
+        self.arr_variables = self.variables_input.get().split(",")
+        self.arr_domains = self.domains_input.get().split(",")
+        self.arr_constraints = self.constraints_input.get().split(",")
+        self.generate_literals()
+        self.graph_coloring_to_cnf()
 
-def generate_edge_clauses(edge, max_color_index):
-    pass
+        # with open("graph.in", "w") as writer:
+            # writer.write(temp_variables + "\n")
+            # writer.write(temp_domains + "\n")
+            # writer.write(temp_constraints)
+        # subprocess.run(["minisat", "graph.in graph.out"])
 
-def submit_data():  
-    temp_variables = variables_input.get().split(",")
-    temp_domains = domains_input.get().split(",")
-    temp_constraints = constraints_input.get().split(",")
-    
-    graph_coloring_to_cnf(temp_variables, temp_domains, temp_constraints)
-
-    # with open("graph.in", "w") as writer:
-        # writer.write(temp_variables + "\n")
-        # writer.write(temp_domains + "\n")
-        # writer.write(temp_constraints)
-    # subprocess.run(["minisat", "graph.in graph.out"])
-    
-submit_button = tk.Button(text='Submit', command=submitData)
-canvas1.create_window(200, 180, window=submit_button)
-
-root.mainloop()
+graph = GraphColoring()
+graph.start()
 
 # Reference
 # https://github.com/ahnjaekwan/Graph-coloring-problem-with-SAT-solver/blob/master/SAT_solver_spec.pdf
