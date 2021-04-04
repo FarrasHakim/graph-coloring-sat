@@ -24,6 +24,12 @@ def submitData ():
     x1 = variables_input.get()  
     x2 = domains_input.get()  
     x3 = constraints_input.get()
+
+    list_nodes = x1.split(",")
+    list_colors = x2.split(",")
+    list_constraints = x3.split(",")
+
+    
     
     label1 = tk.Label(root, text= str(x1) + "," + str(x2) + "," + str(x3))
     canvas1.create_window(200, 230, window=label1)
