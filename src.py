@@ -101,6 +101,9 @@ class GraphColoring:
     def print_answer(self):
         messagebox.showinfo(title="Model", message=self.answer)
 
+    def print_wrong(self):
+        messagebox.showinfo(title="No Model", message="Not Satisfiable")
+
     def get_key_by_value(self, value_to_find):
         print(value_to_find)
         for val in self.literals.items():
