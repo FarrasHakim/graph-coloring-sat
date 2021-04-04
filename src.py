@@ -1,5 +1,6 @@
 import tkinter as tk
 import subprocess
+from itertools import combinations
 
 root= tk.Tk()
 
@@ -8,17 +9,17 @@ canvas1.pack()
 
 variables_label = tk.Label(root, text= "Variables : ")
 canvas1.create_window(80, 80, window=variables_label)
-variables_input = tk.Entry (root) 
+variables_input = tk.Entry (root)
 canvas1.create_window(200, 80, window=variables_input)
 
 domains_label = tk.Label(root, text= "Domains : ")
 canvas1.create_window(80, 110, window=domains_label)
-domains_input = tk.Entry (root) 
+domains_input = tk.Entry (root)
 canvas1.create_window(200, 110, window=domains_input)
 
 constraints_label = tk.Label(root, text= "Constraints : ")
 canvas1.create_window(80, 140, window=constraints_label)
-constraints_input = tk.Entry (root) 
+constraints_input = tk.Entry (root)
 canvas1.create_window(200, 140, window=constraints_input)
 
 def graph_coloring_to_cnf(variables, domains, constraints):
@@ -53,6 +54,17 @@ def submit_data():
     temp_variables = variables_input.get().split(",")
     temp_domains = domains_input.get().split(",")
     temp_constraints = constraints_input.get().split(",")
+    list_colors = ["red","green","blue"]
+
+    list_literals = []
+    list_contraints_each_node = []
+    for i in temp_variables:
+        for j in list_colors:
+            list_literals.append(str(i) + str(j))
+        list_contraints_each_node.append("")
+    
+    
+    print(list_literals)
     
     graph_coloring_to_cnf(temp_variables, temp_domains, temp_constraints)
 
@@ -62,7 +74,7 @@ def submit_data():
         # writer.write(temp_constraints)
     # subprocess.run(["minisat", "graph.in graph.out"])
     
-submit_button = tk.Button(text='Submit', command=submitData)
+submit_button = tk.Button(text='Submit', command=submit_data)
 canvas1.create_window(200, 180, window=submit_button)
 
 root.mainloop()
