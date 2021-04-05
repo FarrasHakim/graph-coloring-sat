@@ -8,4 +8,6 @@
 
 #### 2. Cara menjalankan di Ubuntu
 
-- Langkah 1
+- install minisat dengan `sudo apt-get install minisat`
+- install python 3 dan ptyhon3 tkinter
+- Jalankan `python3 src.py`

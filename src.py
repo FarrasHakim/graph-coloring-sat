@@ -52,21 +52,11 @@ class GraphColoring:
                     if (domain1 != domain2):
                         self.cnf += "-" + self.literals[variable + "_" + domain1] + " -" + self.literals[variable + "_" + domain2] + " 0\n"
                 visited1.append(domain1)
-        for domain in self.arr_domains:
-            visited2 = []
-            for variable1 in self.arr_variables:
-                for variable2 in self.arr_variables:
-                    is_constrained = False
-                    for constraint in self.arr_constraints:
-                        if (variable1 in constraint and variable2 in constraint):
-                            is_constrained = True
-                    if (is_constrained):
-                        continue
-                    elif (variable2 in visited2):
-                        continue
-                    if (variable1 != variable2):
-                        self.cnf += "-" + self.literals[variable1 + "_" + domain] + " -" + self.literals[variable2 + "_" + domain] + " 0\n"
-                visited2.append(variable1)
+        for constraint in self.arr_constraints:
+            const_variable1 = constraint.split("!=")[0]
+            const_variable2 = constraint.split("!=")[1]
+            for domain in self.arr_domains:
+                self.cnf += "-" + self.literals[const_variable1 + "_" + domain] + " -" + self.literals[const_variable2 + "_" + domain] + " 0\n"
     
     def write_to_cnf_file(self):
         with open("sat.cnf", "w") as writer:
@@ -110,6 +100,9 @@ class GraphColoring:
 
     def print_answer(self):
         messagebox.showinfo(title="Model", message=self.answer)
+
+    def print_wrong(self):
+        messagebox.showinfo(title="No Model", message="Not Satisfiable")
 
     def get_key_by_value(self, value_to_find):
         print(value_to_find)
