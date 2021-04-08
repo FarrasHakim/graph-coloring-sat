@@ -20,21 +20,50 @@ body {
 }
 
 main {
-  width: 80vw;
-  height: 80vh;
+  width: 50vw;
+  height: 50vh;
 }
 
 main h1 {
   margin-bottom: 1rem;
 }
 
-main .canvas {
+main .canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin-top: 1rem;
+}
+
+main canvas {
   background-color: white;
   border-radius: 10px;
   width: 100%;
   height: 100%;
   cursor: crosshair;
+}
+
+main .canvas-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+main .canvas {
+  background-color: transparent;
+  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
   position: relative;
+  overflow: hidden;
+}
+
+main .canvas .line {
+  height: 2px;
+  position: absolute;
+  background-color: black;
+  pointer-events: none;
 }
 
 main .canvas .node {
@@ -60,5 +89,20 @@ main .canvas .node {
 main .canvas .node:hover {
   -webkit-box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.1);
           box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.1);
+}
+
+.btn {
+  outline: none;
+  border: 0;
+  padding: 10px;
+  background-color: #0099ff;
+  font-weight: bold;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: rgba(0, 153, 255, 0.733);
 }
 /*# sourceMappingURL=style.css.map */

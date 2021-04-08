@@ -45,6 +45,7 @@ function nodeClick(e) {
   if (stillInputNode) {
     return;
   }
+  console.log("test");
   const id = e.target.getAttribute("id");
   if (!constraint.current) constraint.current = id;
   else if (!constraint.other) {
@@ -60,6 +61,10 @@ function nodeClick(e) {
     const othY = parseInt(otherNode.style.top.split("px")[0]);
     console.log();
     linedraw(curX, curY, othX, othY);
+    constraint = {
+      current: null,
+      other: null,
+    };
   }
 }
 
