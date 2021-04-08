@@ -1,37 +1,49 @@
-import tkinter as tk
+from tkinter import *
 from tkinter import messagebox
 import subprocess
 import os
 
 class GraphColoring:
     def __init__(self):
-        self.root= tk.Tk()
+        self.root= Tk()
+        self.literals = {}
+        self.cnf = ""
+        self.answer = "Hasil: \n"
+        self.model = []
 
     def start(self):
-        self.canvas1 = tk.Canvas(self.root, width = 400, height = 300)
-        self.canvas1.pack()
+        self.variables_label_frame = Frame()
+        self.variables_label_frame.grid(row=0, column=0)
+        self.variables_label = Label(self.variables_label_frame, text= "Variables : ")
+        self.variables_label.pack()
+        self.variables_input_frame = Frame()
+        self.variables_input_frame.grid(row=0, column=1)
+        self.variables_input = Entry (self.variables_input_frame)
+        self.variables_input.pack()
 
-        self.variables_label = tk.Label(self.root, text= "Variables : ")
-        self.canvas1.create_window(80, 80, window=self.variables_label)
-        self.variables_input = tk.Entry (self.root) 
-        self.canvas1.create_window(200, 80, window=self.variables_input)
+        self.domains_label_frame = Frame()
+        self.domains_label_frame.grid(row=1, column=0)
+        self.domains_label = Label(self.domains_label_frame, text= "Domains : ")
+        self.domains_label.pack()
+        self.domains_input_frame = Frame()
+        self.domains_input_frame.grid(row=1, column=1)
+        self.domains_input = Entry(self.domains_input_frame)
+        self.domains_input.pack()
 
-        self.domains_label = tk.Label(self.root, text= "Domains : ")
-        self.canvas1.create_window(80, 110, window=self.domains_label)
-        self.domains_input = tk.Entry (self.root) 
-        self.canvas1.create_window(200, 110, window=self.domains_input)
+        self.constraints_label_frame = Frame()
+        self.constraints_label_frame.grid(row=2, column=0)
+        self.constraints_label = Label(self.constraints_label_frame, text= "Constraints : ")
+        self.constraints_label.pack()
+        self.constraints_input_frame = Frame()
+        self.constraints_input_frame.grid(row=2, column=1)
+        self.constraints_input = Entry(self.constraints_input_frame)
+        self.constraints_input.pack()
 
-        self.constraints_label = tk.Label(self.root, text= "Constraints : ")
-        self.canvas1.create_window(80, 140, window=self.constraints_label)
-        self.constraints_input = tk.Entry (self.root)
-        self.canvas1.create_window(200, 140, window=self.constraints_input)
-
-        self.submit_button = tk.Button(text='Submit', command=self.submit_data)
-        self.canvas1.create_window(200, 180, window=self.submit_button)
+        self.submit_button = Button(text='Submit', command=self.submit_data)
+        self.submit_button.grid(row=3, column=0, columnspan=2)
         self.root.mainloop()
 
     def generate_literals(self):
-        self.literals = {}
         count = 1
         for variable in self.arr_variables:
             for domain in self.arr_domains:
@@ -39,7 +51,7 @@ class GraphColoring:
                 count += 1
 
     def graph_coloring_to_cnf(self):
-        self.cnf = ""
+        print(self.literals)
         for variable in self.arr_variables:
             for domain in self.arr_domains:
                 self.cnf += self.literals[variable+"_"+domain] + " "
@@ -49,7 +61,7 @@ class GraphColoring:
                 for domain2 in self.arr_domains:
                     if (domain2 in visited1):
                         continue
-                    if (domain1 != domain2):
+                    elif (domain1 != domain2):
                         self.cnf += "-" + self.literals[variable + "_" + domain1] + " -" + self.literals[variable + "_" + domain2] + " 0\n"
                 visited1.append(domain1)
         try:
@@ -61,7 +73,7 @@ class GraphColoring:
             return True
         except:
             return False
-    
+
     def write_to_cnf_file(self):
         with open("sat.cnf", "w") as writer:
             writer.write(self.cnf)
@@ -69,17 +81,20 @@ class GraphColoring:
         if (os.name) == "nt":
             os.system('cmd /c minisat sat.cnf result.cnf')
         else:
-            print("masuk")
             subprocess.run(["minisat", "sat.cnf", "result.cnf"])
 
-    def submit_data(self):  
+    def parse_input_data(self):
         self.arr_variables = self.variables_input.get().split(",")
         self.arr_domains = self.domains_input.get().split(",")
         self.arr_constraints = self.constraints_input.get().split(",")
+
+    def submit_data(self):
+        self.parse_input_data()
         self.generate_literals()
         is_cnf_generated = self.graph_coloring_to_cnf()
         if (is_cnf_generated):
             self.write_to_cnf_file()
+            self.parse_model()
             if (self.is_satisfiable()):
                 self.translate_literal()
                 self.print_answer()
@@ -88,19 +103,18 @@ class GraphColoring:
         else:
             messagebox.showinfo(title="Wrong Input", message="Please check your input! it's may be wrong :)")
 
-    def is_satisfiable(self):
+    def parse_model(self):
         with open("result.cnf") as reader:
-            if("UNSAT" in reader.readline()):
-                print("UNSATISFIABLE")
-                return False
-            else:
+            if("UNSAT" not in reader.readline()):
                 temp_model = reader.readline()[:-3]
                 self.model = temp_model.split(" ")
-                return True
-                
-    def translate_literal(self):
-        self.answer = "Hasil: \n"
 
+    def is_satisfiable(self):
+        if (len(self.model) > 0):
+            return True
+        return False
+
+    def translate_literal(self):
         for literal in self.model:
             if("-" not in literal):
                 self.answer += self.get_key_by_value(literal) + "\n"
