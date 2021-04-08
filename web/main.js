@@ -1,11 +1,15 @@
-const canvas = document.querySelector(".canvas");
+const canvasDiv = document.querySelector(".canvas");
+const canvas = document.querySelector("#canvas");
+let ctx = canvas.getContext("2d");
 
-canvas.addEventListener("click", drawNode);
+canvasDiv.addEventListener("click", drawNode);
 
-let drawingMode = true;
+let canAddNode = true;
+let stillInputNode = false;
 
 function drawNode(e) {
-  if (drawingMode) {
+  if (canAddNode && !stillInputNode) {
+    stillInputNode = true;
     const node = document.createElement("div");
     const nodeNameInput = document.createElement("input");
     nodeNameInput.classList.add("node-name-input");
@@ -19,10 +23,10 @@ function drawNode(e) {
     });
     node.addEventListener("click", nodeClick);
     node.addEventListener("mouseenter", () => {
-      drawingMode = false;
+      canAddNode = false;
     });
     node.addEventListener("mouseleave", () => {
-      drawingMode = true;
+      canAddNode = true;
     });
     const cursorPos = getCursorPosition(e);
     node.style.left = cursorPos.x + "px";
@@ -30,18 +34,71 @@ function drawNode(e) {
 
     e.target.append(node);
     node.append(nodeNameInput);
-    console.log(e);
   }
 }
-
+let constraint = {
+  current: null,
+  other: null,
+};
+let constraints = [];
 function nodeClick(e) {
-  console.log(e);
+  if (stillInputNode) {
+    return;
+  }
+  const id = e.target.getAttribute("id");
+  if (!constraint.current) constraint.current = id;
+  else if (!constraint.other) {
+    constraint.other = id;
+    const tempConstraint = constraint.current + "!=" + constraint.other;
+    if (constraints.includes(tempConstraint)) return;
+    constraints.push(tempConstraint);
+    const currentNode = document.getElementById(constraint.current);
+    const otherNode = document.getElementById(constraint.other);
+    const curX = parseInt(currentNode.style.left.split("px")[0]);
+    const curY = parseInt(currentNode.style.top.split("px")[0]);
+    const othX = parseInt(otherNode.style.left.split("px")[0]);
+    const othY = parseInt(otherNode.style.top.split("px")[0]);
+    console.log();
+    linedraw(curX, curY, othX, othY);
+  }
 }
 
 function getCursorPosition(e) {
   var mouseX = e.offsetX;
   var mouseY = e.offsetY;
   return { x: mouseX, y: mouseY };
+}
+
+function linedraw(ax, ay, bx, by) {
+  const distance = Math.sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by));
+  xMid = (ax + bx) / 2;
+  yMid = (ay + by) / 2;
+
+  salopeInRadian = Math.atan2(ay - by, ax - bx);
+  salopeInDegrees = (salopeInRadian * 180) / Math.PI;
+
+  const line = document.createElement("div");
+  line.classList.add("line");
+  line.style.width = distance;
+  line.style.width = distance + "px";
+  line.style.top = yMid + "px";
+  line.style.left = xMid - distance / 2 + "px";
+  line.style.transform = "rotate(" + salopeInDegrees + "deg)";
+  canvasDiv.append(line);
+}
+
+function drawLine(ctx, begin, end, stroke = "black", width = 1) {
+  if (stroke) {
+    ctx.strokeStyle = stroke;
+  }
+
+  if (width) {
+    ctx.lineWidth = width;
+  }
+  ctx.beginPath();
+  ctx.moveTo(...begin);
+  ctx.lineTo(...end);
+  ctx.stroke();
 }
 
 const variables = [];
@@ -56,4 +113,5 @@ function submitNode(e, node) {
   node.append(val);
   e.target.style.display = "none";
   variables.push(val);
+  stillInputNode = false;
 }
