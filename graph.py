@@ -61,7 +61,6 @@ class GraphColoring:
             self.parse_model()
             if (self.is_satisfiable()):
                 result = self.translate_literal()
-                
         return result
 
     def parse_model(self):
@@ -91,6 +90,7 @@ class GraphColoring:
 @eel.expose
 def color_the_graph(variables, domains, constraints):
     graph = GraphColoring(variables, domains, constraints)
-    return graph.submit_data()
+    data = graph.submit_data()
+    return data
 
 eel.start("index.html", size=(1000, 600))

@@ -13,19 +13,24 @@ function colorTheGraph() {
   const domains = getDomains();
   const variables = variableList;
   const constraints = constraintList;
-
-  eel.color_the_graph(domains, variables, constraints)(setColorGraph);
+  if (variables === 0) {
+    alert("Make sure you have already input the variables!")
+  }
+  eel.color_the_graph(variables, domains, constraints)(setColorGraph);
 }
 
 function setColorGraph(data) {
-  console.log(data);
-  // const modelList = data.split(" ");
-  // for (const model of modelList) {
-  //   const variable = model.split("_")[0];
-  //   const color = model.split("_")[1];
-  //   const node = document.getElementById(variable);
-  //   node.style.backgrounColor = color;
-  // }
+  console.log(data)
+  const modelList = data.split(" ");
+  for (const model of modelList) {
+    console.log(model)
+    const variable = model.split("_")[0];
+    const color = model.split("_")[1];
+    console.log(variable)
+    console.log(color)
+    const node = document.getElementById(variable);
+    node.style.backgroundColor = color;
+  }
 }
 
 function addDomain(e) {
@@ -35,7 +40,7 @@ function addDomain(e) {
   domainInput.classList.add("domain");
   const domains = getDomains();
   if (domains.includes(domainInput.value)) {
-    alert("Ubah domain warna yang berwarna putih!");
+    alert("Domain color already exist! Replace white color with others before you add another color!");
     return;
   }
   domainContainer.append(domainInput);
