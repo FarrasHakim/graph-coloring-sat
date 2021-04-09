@@ -1,12 +1,57 @@
 const canvasDiv = document.querySelector(".canvas");
 const canvas = document.querySelector("#canvas");
+const addDomainBtn = document.querySelector(".add-domain");
+const domainContainer = document.querySelector(".add-domain__container");
+const colorTheGraphButton = document.getElementById("color-graph");
 let ctx = canvas.getContext("2d");
 
 canvasDiv.addEventListener("click", drawNode);
+addDomainBtn.addEventListener("click", addDomain);
+colorTheGraphButton.addEventListener("click", colorTheGraph);
+
+function colorTheGraph() {
+  const domains = getDomains();
+  const variables = variableList;
+  const constraints = constraintList;
+
+  eel.color_the_graph(domains, variables, constraints)(setColorGraph);
+}
+
+function setColorGraph(data) {
+  console.log(data);
+  // const modelList = data.split(" ");
+  // for (const model of modelList) {
+  //   const variable = model.split("_")[0];
+  //   const color = model.split("_")[1];
+  //   const node = document.getElementById(variable);
+  //   node.style.backgrounColor = color;
+  // }
+}
+
+function addDomain(e) {
+  const domainInput = document.createElement("input");
+  domainInput.setAttribute("type", "color");
+  domainInput.value = "#ffffff";
+  domainInput.classList.add("domain");
+  const domains = getDomains();
+  if (domains.includes(domainInput.value)) {
+    alert("Ubah domain warna yang berwarna putih!");
+    return;
+  }
+  domainContainer.append(domainInput);
+}
+
+function getDomains() {
+  const temp = [];
+  document.querySelectorAll(".domain").forEach((e) => {
+    temp.push(e.value);
+  });
+  return temp;
+}
 
 let canAddNode = true;
 let stillInputNode = false;
-
+let drawingMode = true;
 function drawNode(e) {
   if (canAddNode && !stillInputNode) {
     stillInputNode = true;
@@ -40,7 +85,7 @@ let constraint = {
   current: null,
   other: null,
 };
-let constraints = [];
+let constraintList = [];
 function nodeClick(e) {
   if (stillInputNode) {
     return;
@@ -51,8 +96,8 @@ function nodeClick(e) {
   else if (!constraint.other) {
     constraint.other = id;
     const tempConstraint = constraint.current + "!=" + constraint.other;
-    if (constraints.includes(tempConstraint)) return;
-    constraints.push(tempConstraint);
+    if (constraintList.includes(tempConstraint)) return;
+    constraintList.push(tempConstraint);
     const currentNode = document.getElementById(constraint.current);
     const otherNode = document.getElementById(constraint.other);
     const curX = parseInt(currentNode.style.left.split("px")[0]);
@@ -106,17 +151,17 @@ function drawLine(ctx, begin, end, stroke = "black", width = 1) {
   ctx.stroke();
 }
 
-const variables = [];
+const variableList = [];
 
 function submitNode(e, node) {
   const val = e.target.value;
-  if (variables.includes(val)) {
+  if (variableList.includes(val)) {
     alert("Variable already exists!\nInput another variable");
     return;
   }
   node.setAttribute("id", val);
   node.append(val);
   e.target.style.display = "none";
-  variables.push(val);
   stillInputNode = false;
+  variableList.push(val);
 }

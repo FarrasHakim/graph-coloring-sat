@@ -7,19 +7,35 @@
 - Pastikan cygwin ada di PATH. Contoh: `C:\cygwin\bin`
 - Jalankan `python src.py`
 
-#### 2. Cara menjalankan di Ubuntu
+#### 2. Cara menjalankan di wsl
 
-- Update terlebih dahulu repository anda
+- Update repository:
+
+```
+sudo apt update
+```
+
 - Install package minisat dengan command berikut:
 
 ```
 sudo apt install minisat
 ```
 
-- Install package python dan tkinter
+- Install package python3 dan pip3
 
 ```
-sudo apt install python3 python3-tk
+sudo apt install python3 python3-pip
+```
+
+- Install package yang terdapat di requirements
+
+```
+pip3 install -r requirements.txt
+```
+
+- Install chrome di wsl
+
+```
 ```
 
 - Jalankan `python3 src.py`
