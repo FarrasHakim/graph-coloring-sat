@@ -1,6 +1,14 @@
 import subprocess
 import os
 import eel
+import platform
+import sys
+
+if sys.platform in ['win32', 'win64'] and int(platform.release()) >= 10:
+    pass
+else:
+    subprocess.run(["sudo", "apt", "install", "-y", "minisat"])
+
 
 eel.init("web")
 
@@ -93,4 +101,4 @@ def color_the_graph(variables, domains, constraints):
     data = graph.submit_data()
     return data
 
-eel.start("index.html", size=(1000, 600))
+eel.start("index.html", mode="default")
