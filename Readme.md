@@ -36,6 +36,21 @@ pip3 install -r requirements.txt
 - Install chrome di wsl
 
 ```
+
 ```
 
 - Jalankan `python3 src.py`
+
+### Build Executable Application
+
+1. Install required package
+
+```
+pip install -r requirements.txt
+```
+
+2. Build executable files using this command
+
+```
+python -m eel graph.py web --hidden-import eel --onefile --noconsole --windowed
+```
