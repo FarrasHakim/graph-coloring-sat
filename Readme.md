@@ -2,9 +2,12 @@
 
 #### 1. Cara menjalankan di windows
 
-- Ikuti tutorial install minisat di [link ini](https://web.cecs.pdx.edu/~hook/logicw11/Assignments/MinisatOnWindows.html)
+- Install cygwin dari link [ini](http://www.cygwin.com/) (Install yang versi 32bit karena yang 64bit error)
+- Jalankan setup-x86.exe lalu install seperti biasa
+- Download minisat dari link [ini](http://minisat.se/downloads/MiniSat_v1.14_cygwin)
+- Pindahkan ke lokasi cygwin (defaultnya `C:\cygwin\bin`)
 - Pastikan python 3 terinstall dan ada di PATH.
-- Pastikan cygwin ada di PATH. Contoh: `C:\cygwin\bin`
+- Pastikan cygwin ada di PATH. Contoh: `C:\cygwin\bin` terletak di PATH
 - Jalankan `python src.py`
 
 #### 2. Cara menjalankan di wsl
