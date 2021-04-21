@@ -3,7 +3,6 @@ const canvas = document.querySelector("#canvas");
 const addDomainBtn = document.querySelector(".add-domain");
 const domainContainer = document.querySelector(".add-domain__container");
 const colorTheGraphButton = document.getElementById("color-graph");
-let ctx = canvas.getContext("2d");
 
 canvasDiv.addEventListener("click", drawNode);
 addDomainBtn.addEventListener("click", addDomain);
@@ -14,20 +13,21 @@ function colorTheGraph() {
   const variables = variableList;
   const constraints = constraintList;
   if (variables === 0) {
-    alert("Make sure you have already input the variables!")
+    alert("Make sure you have already input the variables!");
   }
-  eel.color_the_graph(variables, domains, constraints)(setColorGraph);
+  eel.color_the_graph(variables, domains, constraints)(checkResult);
+}
+
+function checkResult(data) {
+  if (data) setColorGraph(data);
+  else alert("UNSATISFIABLE");
 }
 
 function setColorGraph(data) {
-  console.log(data)
   const modelList = data.split(" ");
   for (const model of modelList) {
-    console.log(model)
     const variable = model.split("_")[0];
     const color = model.split("_")[1];
-    console.log(variable)
-    console.log(color)
     const node = document.getElementById(variable);
     node.style.backgroundColor = color;
   }
@@ -40,7 +40,9 @@ function addDomain(e) {
   domainInput.classList.add("domain");
   const domains = getDomains();
   if (domains.includes(domainInput.value)) {
-    alert("Domain color already exist! Replace white color with others before you add another color!");
+    alert(
+      "Domain color already exist! Replace white color with others before you add another color!"
+    );
     return;
   }
   domainContainer.append(domainInput);
@@ -86,6 +88,7 @@ function drawNode(e) {
     node.append(nodeNameInput);
   }
 }
+
 let constraint = {
   current: null,
   other: null,
@@ -95,7 +98,6 @@ function nodeClick(e) {
   if (stillInputNode) {
     return;
   }
-  console.log("test");
   const id = e.target.getAttribute("id");
   if (!constraint.current) constraint.current = id;
   else if (!constraint.other) {
@@ -109,7 +111,6 @@ function nodeClick(e) {
     const curY = parseInt(currentNode.style.top.split("px")[0]);
     const othX = parseInt(otherNode.style.left.split("px")[0]);
     const othY = parseInt(otherNode.style.top.split("px")[0]);
-    console.log();
     linedraw(curX, curY, othX, othY);
     constraint = {
       current: null,
@@ -140,20 +141,6 @@ function linedraw(ax, ay, bx, by) {
   line.style.left = xMid - distance / 2 + "px";
   line.style.transform = "rotate(" + salopeInDegrees + "deg)";
   canvasDiv.append(line);
-}
-
-function drawLine(ctx, begin, end, stroke = "black", width = 1) {
-  if (stroke) {
-    ctx.strokeStyle = stroke;
-  }
-
-  if (width) {
-    ctx.lineWidth = width;
-  }
-  ctx.beginPath();
-  ctx.moveTo(...begin);
-  ctx.lineTo(...end);
-  ctx.stroke();
 }
 
 const variableList = [];

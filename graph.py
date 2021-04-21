@@ -29,6 +29,9 @@ class GraphColoring:
                 count += 1
 
     def graph_coloring_to_cnf(self):
+        if (len(self.arr_variables) == 0 or len(self.arr_domains) == 0):
+            return False
+
         for variable in self.arr_variables:
             for domain in self.arr_domains:
                 self.cnf += self.literals[variable+"_"+domain] + " "

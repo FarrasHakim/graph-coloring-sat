@@ -20,29 +20,8 @@ main {
     margin-bottom: 1rem;
   }
 
-  .canvas-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    margin: 10px 0;
-  }
-
-  canvas {
-    background-color: white;
-    border-radius: 10px;
-    width: 100%;
-    height: 100%;
-    cursor: crosshair;
-  }
-
-  .canvas-container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
-
   .canvas {
-    background-color: transparent;
+    background-color: white;
     border-radius: 10px;
     width: 100%;
     height: 100%;
@@ -97,6 +76,14 @@ main {
     color: white;
     &:hover {
       background-color: rgb(13, 141, 124);
+    }
+  }
+
+  &__danger {
+    background-color: rgb(177, 19, 66);
+    color: white;
+    &:hover {
+      background-color: rgb(124, 13, 28);
     }
   }
 }
