@@ -4,3 +4,5 @@ graph.spec
 
 sat.cnf
 result.cnf
+dist/sat.cnf
+dist/result.cnf
