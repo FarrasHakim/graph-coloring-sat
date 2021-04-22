@@ -8,6 +8,8 @@
 - Pindahkan ke lokasi cygwin (defaultnya `C:\cygwin\bin`)
 - Pastikan python 3 terinstall dan ada di PATH.
 - Pastikan cygwin ada di PATH. Contoh: `C:\cygwin\bin` terletak di PATH
+- Masuk ke folder "graph coloring sat" lalu buka cmd
+- Jalankan `pip install -r requirements.txt`
 - Jalankan `python src.py`
 
 #### 2. Cara menjalankan di wsl
