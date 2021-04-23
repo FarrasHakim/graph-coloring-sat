@@ -1,6 +1,6 @@
 ## Tri Coloring Graph Problem
 
-#### 1. Cara menjalankan di windows
+#### 1. Cara menjalankan pada windows
 
 - Install cygwin dari link [ini](http://www.cygwin.com/) (Install yang versi 32bit karena yang 64bit error)
 - Jalankan setup-x86.exe lalu install seperti biasa
@@ -10,9 +10,9 @@
 - Pastikan cygwin ada di PATH. Contoh: `C:\cygwin\bin` terletak di PATH
 - Masuk ke folder "graph coloring sat" lalu buka cmd
 - Jalankan `pip install -r requirements.txt`
-- Jalankan `python src.py`
+- Jalankan `python graph.py`
 
-#### 2. Cara menjalankan di wsl
+#### 2. Cara menjalankan pada linux
 
 - Update repository:
 
@@ -38,13 +38,8 @@ sudo apt install python3 python3-pip
 pip3 install -r requirements.txt
 ```
 
-- Install chrome di wsl
 
-```
-
-```
-
-- Jalankan `python3 src.py`
+- Jalankan `python3 graph.py`
 
 ### Build Executable Application
 
