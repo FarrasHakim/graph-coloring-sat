@@ -16,10 +16,12 @@ class GraphColoring:
     def __init__(self, variables, domains, constraints):
         self.literals = {}
         self.cnf = ""
+        self.model_str = ""
         self.model_arr = []
         self.arr_variables = variables
         self.arr_domains = domains
         self.arr_constraints = constraints
+        self.generate_literals()
 
     def generate_literals(self):
         count = 1
@@ -68,11 +70,24 @@ class GraphColoring:
     def parse_model(self):
         with open("result.cnf") as reader:
             if("UNSAT" not in reader.readline()):
-                self.model_str = reader.readline()[:-3]
-                self.model_arr = self.model_str.split(" ")
+                temp_model = reader.readline()[:-3]
+                self.model_arr = temp_model.split(" ")
+
+    def parse_new_model(self):
+        result = ""
+        for literal in self.model_arr:
+            if ("-" in literal):
+                temp = literal.replace("-", "")
+                result += temp + " 0\n"
+            else:
+                result += "-" + literal + " 0\n"
+        self.model_str = result
 
     def add_result_as_new_constraint(self):
-        pass
+        self.parse_new_model()
+        with open("sat.cnf", "a") as writer:
+            writer.write(self.model_str)
+            writer.close()
 
     def is_satisfiable(self):
         if (len(self.model_arr) > 0):
@@ -80,20 +95,19 @@ class GraphColoring:
         return False
 
     def submit_data(self):
-        self.generate_literals()
         is_cnf_generated = self.graph_coloring_to_cnf()
-        result = ""
         if (is_cnf_generated):
             self.write_to_cnf_file()
-            self.runMinisat()
-            self.parse_model()
-            if (self.is_satisfiable()):
-                result = self.translate_literal()
-                print(result)
-        return result
+            return self.find_solution()
+        return ""
 
-    def find_solution_using_exist_cnf(self):
-        pass
+    def find_solution(self):
+        self.runMinisat()
+        self.parse_model()
+        self.add_result_as_new_constraint()
+        if (self.is_satisfiable()):
+            return self.translate_literal()
+        return ""
 
     def translate_literal(self):
         result = ""
@@ -103,21 +117,26 @@ class GraphColoring:
         return result
 
     def get_key_by_value(self, value_to_find):
+        print(self.literals)
         key_list = list(self.literals.keys())
         val_list = list(self.literals.values())
+        print(val_list)
+        print(value_to_find)
         pos = val_list.index(value_to_find)
         return key_list[pos]
 
 @eel.expose
 def color_the_graph(variables, domains, constraints):
+    print("color")
     graph = GraphColoring(variables, domains, constraints)
     data = graph.submit_data()
     return data
 
 @eel.expose
 def recolor_the_graph(variables, domains, constraints):
+    print("recolor")
     graph = GraphColoring(variables, domains, constraints)
-    data = graph.find_solution_using_exist_cnf()
+    data = graph.find_solution()
     return data
 
 eel.start("index.html", mode="default")

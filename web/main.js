@@ -8,14 +8,55 @@ canvasDiv.addEventListener("click", drawNode);
 addDomainBtn.addEventListener("click", addDomain);
 colorTheGraphButton.addEventListener("click", colorTheGraph);
 
+function allEqual(ls, otherLs) {
+  if (!ls || !otherLs) return false;
+  for (const data of ls) {
+    if (!otherLs.includes(data)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function colorTheGraph() {
+  let domainSaved = window.localStorage.getItem("domains");
+  let variableSaved = window.localStorage.getItem("variables");
+  let constraintSaved = window.localStorage.getItem("constraints");
+
+  if (domainSaved && variableSaved && constraintSaved) {
+    domainSaved = domainSaved.split(",");
+    variableSaved = variableSaved.split(",");
+    constraintSaved = constraintSaved.split(",");
+  }
+
   const domains = getDomains();
   const variables = variableList;
   const constraints = constraintList;
-  if (variables === 0) {
+
+  if (variables.length === 0) {
     alert("Make sure you have already input the variables!");
+    return;
+  } else if (domains.length === 0) {
+    alert("Make sure you have already input the domains!");
+    return;
   }
-  eel.color_the_graph(variables, domains, constraints)(checkResult);
+
+  console.log(allEqual(domains, domainSaved));
+  console.log(allEqual(variables, variableSaved));
+  console.log(allEqual(constraints, constraintSaved));
+
+  if (
+    allEqual(domains, domainSaved) &&
+    allEqual(variables, variableSaved) &&
+    allEqual(constraints, constraintSaved)
+  ) {
+    eel.recolor_the_graph(variables, domains, constraints)(checkResult);
+  } else {
+    eel.color_the_graph(variables, domains, constraints)(checkResult);
+  }
+  window.localStorage.setItem("domains", domains);
+  window.localStorage.setItem("variables", variables);
+  window.localStorage.setItem("constraints", constraints);
 }
 
 function checkResult(data) {
@@ -29,11 +70,11 @@ function setColorGraph(data) {
     const variable = model.split("_")[0];
     const color = model.split("_")[1];
     const node = document.getElementById(variable);
-    node.style.backgroundColor = color;
+    if (node) node.style.backgroundColor = color;
   }
 }
 
-function addDomain(e) {
+function addDomain() {
   const domainInput = document.createElement("input");
   domainInput.setAttribute("type", "color");
   domainInput.value = "#ffffff";
