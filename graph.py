@@ -16,7 +16,7 @@ class GraphColoring:
     def __init__(self, variables, domains, constraints):
         self.literals = {}
         self.cnf = ""
-        self.model = []
+        self.model_arr = []
         self.arr_variables = variables
         self.arr_domains = domains
         self.arr_constraints = constraints
@@ -58,10 +58,26 @@ class GraphColoring:
         with open("sat.cnf", "w") as writer:
             writer.write(self.cnf)
             writer.close()
+    
+    def runMinisat(self):
         if (os.name) == "nt":
             os.system('cmd /c minisat sat.cnf result.cnf')
         else:
             subprocess.run(["minisat", "sat.cnf", "result.cnf"])
+
+    def parse_model(self):
+        with open("result.cnf") as reader:
+            if("UNSAT" not in reader.readline()):
+                self.model_str = reader.readline()[:-3]
+                self.model_arr = self.model_str.split(" ")
+
+    def add_result_as_new_constraint(self):
+        pass
+
+    def is_satisfiable(self):
+        if (len(self.model_arr) > 0):
+            return True
+        return False
 
     def submit_data(self):
         self.generate_literals()
@@ -69,25 +85,19 @@ class GraphColoring:
         result = ""
         if (is_cnf_generated):
             self.write_to_cnf_file()
+            self.runMinisat()
             self.parse_model()
             if (self.is_satisfiable()):
                 result = self.translate_literal()
+                print(result)
         return result
 
-    def parse_model(self):
-        with open("result.cnf") as reader:
-            if("UNSAT" not in reader.readline()):
-                temp_model = reader.readline()[:-3]
-                self.model = temp_model.split(" ")
-
-    def is_satisfiable(self):
-        if (len(self.model) > 0):
-            return True
-        return False
+    def find_solution_using_exist_cnf(self):
+        pass
 
     def translate_literal(self):
         result = ""
-        for literal in self.model:
+        for literal in self.model_arr:
             if("-" not in literal):
                 result += self.get_key_by_value(literal) + " "
         return result
@@ -102,6 +112,12 @@ class GraphColoring:
 def color_the_graph(variables, domains, constraints):
     graph = GraphColoring(variables, domains, constraints)
     data = graph.submit_data()
+    return data
+
+@eel.expose
+def recolor_the_graph(variables, domains, constraints):
+    graph = GraphColoring(variables, domains, constraints)
+    data = graph.find_solution_using_exist_cnf()
     return data
 
 eel.start("index.html", mode="default")
