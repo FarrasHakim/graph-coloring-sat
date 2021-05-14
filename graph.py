@@ -76,10 +76,7 @@ class GraphColoring:
     def parse_new_model(self):
         result = ""
         for literal in self.model_arr:
-            if ("-" in literal):
-                temp = literal.replace("-", "")
-                result += temp + " 0\n"
-            else:
+            if ("-" not in literal):
                 result += "-" + literal + " 0\n"
         self.model_str = result
 
