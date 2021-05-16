@@ -1,4 +1,4 @@
-## Tri Coloring Graph Problem
+## Graph Coloring Problem
 
 #### 1. Cara menjalankan pada windows
 
